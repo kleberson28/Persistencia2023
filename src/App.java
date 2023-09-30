@@ -1,5 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -83,22 +84,126 @@ public static void main(String[] args) throws Exception {
     }
 
     // //Converter os dados do arquivo CSV para gerar um arquivo JSON e um arquivo XML usando a biblioteca Jackson.
-    public void f3(){
-
-    }
+    public void converterCSV(){
+        public static void main(String[] args) throws IOException {
+            String arquivoCSV = "Produto.csv";
+            String arquivoJSON = "Produto.json";
+            String arquivoXML = "Produto.xml";
     
-    // //não declarado no documento do moodle
-    public void f4(){
-
-    }
+            converterCSVParaJSON(arquivoCSV, arquivoJSON);
+            converterCSVParaXML(arquivoCSV, arquivoXML);
+        }
+    
+        public static void converterCSVParaJSON(String arquivoCSV, String arquivoJSON) throws IOException {
+            List<Produto> produtos = new ArrayList<>();
+    
+            try (BufferedReader reader = new BufferedReader(new FileReader(arquivoCSV))) {
+                // Ignora a primeira linha (cabeçalho do arquivo CSV)
+                reader.readLine();
+    
+                // Lê cada linha do arquivo CSV
+                String linha;
+                while ((linha = reader.readLine()) != null) {
+                    // Obtém os campos de cada linha
+                    String[] campos = linha.split(",");
+    
+                    // Cria um objeto Produto com os campos obtidos do CSV
+                    Produto produto = new Produto();
+                    produto.setId(Integer.parseInt(campos[0]));
+                    produto.setName(campos[1]);
+                    produto.setType(campos[2]);
+                    produto.setPrice(Double.parseDouble(campos[3]));
+                    produto.setValidityData(campos[4]);
+                    produto.setProductStock(campos[5]);
+    
+                    // Adiciona o produto à lista de produtos
+                    produtos.add(produto);
+                }
+            }
+    
+            // Escreve a lista de produtos no arquivo JSON
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(new File(arquivoJSON), produtos);
+        }
+    
+        public static void converterCSVParaXML(String arquivoCSV, String arquivoXML) throws IOException {
+            List<Produto> produtos = new ArrayList<>();
+    
+            try (BufferedReader reader = new BufferedReader(new FileReader(arquivoCSV))) {
+                // Ignora a primeira linha (cabeçalho do arquivo CSV)
+                reader.readLine();
+    
+                // Lê cada linha do arquivo CSV
+                String linha;
+                while ((linha = reader.readLine()) != null) {
+                    // Obtém os campos de cada linha
+                    String[] campos = linha.split(",");
+    
+                    // Cria um objeto Produto com os campos obtidos do CSV
+                    Produto produto = new Produto();
+                    produto.setId(Integer.parseInt(campos[0]));
+                    produto.setName(campos[1]);
+                    produto.setType(campos[2]);
+                    produto.setPrice(Double.parseDouble(campos[3]));
+                    produto.setValidityData(campos[4]);
+                }
+            }
+        }        
+    }  
 
     // //Compactar o arquivo CSV e gerar um novo arquivo de mesmo nome, mas com a extensão ZIP. Deve-se usar a API Java para realizar a compressão.
-    public void f5(){
-
+    public void compactarCSV(){
+        public static void main(String[] args) throws IOException {
+            String arquivoCSV = "Produto.csv";
+            String arquivoZIP = "Produto.zip";
+    
+            compactarCSV(arquivoCSV, arquivoZIP);
+        }
+    
+        public static void compactarCSV(String arquivoCSV, String arquivoZIP) throws IOException {
+            try (FileOutputStream fos = new FileOutputStream(arquivoZIP);
+                    ZipOutputStream zipOut = new ZipOutputStream(fos);
+                    FileInputStream fis = new FileInputStream(arquivoCSV);
+                    BufferedInputStream bis = new BufferedInputStream(fis)) {
+    
+                ZipEntry zipEntry = new ZipEntry(arquivoCSV);
+                zipOut.putNextEntry(zipEntry);
+    
+                byte[] bytes = new byte[1024];
+                int tamanho;
+                while ((tamanho = bis.read(bytes)) > 0) {
+                    zipOut.write(bytes, 0, tamanho);
+                }
+            }
+        }
     }
 
     // //Mostrar na tela o hash SHA256 do arquivo CSV. Use a API Java para calcular o hash.
-    public void f6(){
+    public void hash(){
+        public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
+            String arquivoCSV = "Produto.csv";
+    
+            String hash = calcularHash(arquivoCSV);
+            System.out.println("Hash SHA256 do arquivo CSV: " + hash);
+        }
+    
+        public static String calcularHash(String arquivoCSV) throws IOException, NoSuchAlgorithmException {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    
+            try (FileInputStream fis = new FileInputStream(arquivoCSV);
+                    BufferedInputStream bis = new BufferedInputStream(fis)) {
+    
+                byte[] bytes = new byte[1024];
+                int tamanho;
+                while ((tamanho = bis.read(bytes)) > 0) {
+                    digest.update(bytes, 0, tamanho);
+                }
+            }
+    
+            byte[] hash = digest.digest();
+    
+            return DatatypeConverter.printHexBinary(hash);
+        }
         
     }
 
